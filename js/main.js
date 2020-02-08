@@ -1,27 +1,53 @@
 'use strict';
 
+
+// Cоздадим массив комментариев
+
+var COMMENTS = [];
+var commentsNumber = 6;
+for (i = 0; i < commentsNumber; i++) {
+  COMMENTS.push({
+    avatar: 'img/avatar-6.svg',
+    message: 'В целом всё неплохо. Но не всё.',
+    name: 'Артем'
+  });
+}
+
+// Получаем массив случайных фотографий (ПОКА С ВОЗМОЖНОСТЬЮ ПОВТОРЕНИЯ)
+
+var PHOTO = [];
+var photoNumber = 25;
+var getRandomPhoto = function () {
+  return Math.floor(Math.random() * (25) + 1);
+};
+for (i = 0; i <= photoNumber; i++) {
+  PHOTO.push('photos/' + getRandomPhoto() + '.jpg');
+}
+
+// Получаем случайное число лайков в диапазоне от 15 до 250
+
+var getRandomLikes = function () {
+  return Math.floor(Math.random() * (250 - 15) + 1) + 15;
+};
+
 // Создал массив для визуального отображения (примера)
 
-var pictures = [
-  {
-    url: 'photos/1.jpg',
-    description: 'ajnj',
-    likes: 10,
-    comments: 10
-  },
-  {
-    url: 'photos/1.jpg',
-    description: 'ajnj',
-    likes: 10,
-    comments: 10
-  }
-];
+var PICTURES = [];
+var picturesNumber = 25;
+for (var i = 0; i < picturesNumber; i++) {
+  PICTURES.push({
+    url: PHOTO[i],
+    description: 'описание фотографии',
+    likes: getRandomLikes(),
+    comments: COMMENTS.length
+  });
+}
 
-// Секция куда будем добавлять картинки
+// Находим секцию куда будем добавлять  объекты (картинки)
 
 var similarPictureElement = document.querySelector('.pictures');
 
-// Секция откуда берем шаблон (копируем содержимое template)
+// Находим секцию откуда берем шаблон (копируем содержимое template)
 
 var similarPictureTemplate = document.querySelector('#picture')
     .content
@@ -43,8 +69,8 @@ var renderPicture = function (picture) {
 // Создаем фрагмент и отрисовываем в нем массив pictures
 
 var fragment = document.createDocumentFragment();
-for (var i = 0; i < pictures.length; i++) {
-  fragment.appendChild(renderPicture(pictures[i]));
+for (i = 0; i < PICTURES.length; i++) {
+  fragment.appendChild(renderPicture(PICTURES[i]));
 }
 
 similarPictureElement.appendChild(fragment);
