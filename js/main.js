@@ -34,7 +34,7 @@ var getRandomLikes = function () {
 for (i = 0; i < getRandomNumber(COMMENTS_NUMBER); i++) {
   comments.push({
     avatar: 'img/avatar-' + getRandomNumber(AVATAR_NAMBER) + '.svg',
-    message: generateRandomIndex(commentsMessage) + ' ' + generateRandomIndex(commentsMessage),
+    message: generateRandomIndex(commentsMessage),
     name: generateRandomIndex(nameOfCommentators)
   });
 }
@@ -87,3 +87,20 @@ for (i = 0; i < pictures.length; i++) {
 }
 
 similarPictureElement.appendChild(fragment);
+
+// НАЧНЕМ РАБОТАТЬ С ФОРМОЙ РЕДАКТИРОВАНИЯ ФОТОГРАФИЙ
+
+// Поле выбора файла
+var uploadInput = document.querySelector('#upload-file');
+// Форма редактирования изображения
+var editForm = document.querySelector('.img-upload__overlay');
+// Кнопка закрытия формы редактирования изображения
+// var uploadCancel = document.querySelector('upload-cancel');
+
+// Открываем форму редактирования изображения после добавления фотографи
+
+var openEditForm = function () {
+  editForm.classList.remove('hidden');
+};
+
+uploadInput.addEventListener('change', openEditForm);
