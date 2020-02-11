@@ -56,11 +56,11 @@ for (var i = 0; i < PICTURES_NUMBER; i++) {
   });
 }
 
-// Секция куда будем добавлять  объекты (картинки)
+// Блок куда будем добавлять объекты (картинки)
 
 var similarPictureElement = document.querySelector('.pictures');
 
-// Секция откуда берем шаблон (копируем содержимое template)
+// Блок откуда берем шаблон (копируем содержимое template)
 
 var similarPictureTemplate = document.querySelector('#picture')
     .content
@@ -95,12 +95,43 @@ var uploadInput = document.querySelector('#upload-file');
 // Форма редактирования изображения
 var editForm = document.querySelector('.img-upload__overlay');
 // Кнопка закрытия формы редактирования изображения
-// var uploadCancel = document.querySelector('upload-cancel');
+var editFormCancel = document.querySelector('#upload-cancel');
 
-// Открываем форму редактирования изображения после добавления фотографи
+// Обработчик нажатия клавиши Escape на клавиатуре
 
-var openEditForm = function () {
-  editForm.classList.remove('hidden');
+var onEditFormEscPress = function (evt) {
+  if (evt.key === 'Escape') {
+    closeForm();
+  }
 };
 
-uploadInput.addEventListener('change', openEditForm);
+// Открытие формы - удаляем .hidden
+// добавляем обработчик нажатия Escape
+//
+
+var openForm = function () {
+  editForm.classList.remove('hidden');
+  document.addEventListener('keydown', onEditFormEscPress);
+};
+
+// Закрытие формы - возвращаем .hidden
+// удаляем обработчик нажатия Escape
+
+var closeForm = function () {
+  editForm.classList.add('hidden');
+  document.removeEventListener('keydown', onEditFormEscPress);
+};
+
+// Открываем форму по событю change на поле добавления фотографии
+
+uploadInput.addEventListener('change', function () {
+  openForm();
+});
+
+// закрываем форму по клику на кнопку закрытия "X"
+
+editFormCancel.addEventListener('click', function () {
+  closeForm();
+});
+
+
