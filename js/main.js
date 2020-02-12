@@ -96,7 +96,9 @@ var uploadInput = document.querySelector('#upload-file');
 var editForm = document.querySelector('.img-upload__overlay');
 // Кнопка закрытия формы редактирования изображения
 var editFormCancel = document.querySelector('#upload-cancel');
-
+//
+var imgUploadForm = document.querySelector('.img-upload__form');
+imgUploadForm.setAttribute('action', 'https://js.dump.academy/kekstagram');
 // Обработчик нажатия клавиши Escape на клавиатуре
 
 var onEditFormEscPress = function (evt) {
@@ -107,7 +109,6 @@ var onEditFormEscPress = function (evt) {
 
 // Открытие формы - удаляем .hidden
 // добавляем обработчик нажатия Escape
-//
 
 var openForm = function () {
   editForm.classList.remove('hidden');
@@ -120,6 +121,7 @@ var openForm = function () {
 var closeForm = function () {
   editForm.classList.add('hidden');
   document.removeEventListener('keydown', onEditFormEscPress);
+  imgUploadForm.reset();
 };
 
 // Открываем форму по событю change на поле добавления фотографии
@@ -134,22 +136,27 @@ editFormCancel.addEventListener('click', function () {
   closeForm();
 });
 
-var imgUploadForm = document.querySelector('.img-upload__form');
-imgUploadForm.setAttribute('action', 'https://js.dump.academy/kekstagram');
+// РАБОТА С ХЕШТЕГАМИ
 
-// Объявить пустой массив для хештегов
-// Объявить переменную поля ввода хештегов и найти ее в ДОМе
-// из этой строки в объект методом split засунуть данные
+var hashtagInput = document.querySelector('.text__hashtags');
 
-var hash = document.querySelector('.text__hashtags');
-hash.setAttribute('minlength', '2');
-// var hashtag = hash.split(', ');
-hash.addEventListener('invalid', function () {
-  if (hash.validity.tooShort) {
-    hash.setCustomValidity('Хештеги должны начинаться с "#" и еще что-то там');
-  } else if (hash.validity.tooLong) {
-    hash.setCustomValidity('Каждый хештег не может привышать 20 символов, включая #');
-  } else {
-    hash.setCustomValidity('');
+var validateHashtags = function (value) {
+  value = value.toLowerCase();
+  var hashtags = value.split(/\s+/g);
+  for (i = 0; i < hashtags.length; i++) {
+    if (hashtags[i].length > 20) {
+      hashtagInput.setCustomValidity('Длина одного хэш-тега должа составлять 2 - 20 символов, включая решётку');
+    } else if (hashtags[i].length < 2) {
+      hashtagInput.setCustomValidity('Длина одного хэш-тега YF{EQ} составлять 2 - 20 символов, включая решётку');
+    } else if (hashtags[i].charAt(0) !== '#') {
+      hashtagInput.setCustomValidity('Каждый хэш-тег должен начинаться с символа # (решётка)');
+    } else if (hashtags.length > 5) {
+      hashtagInput.setCustomValidity('Hельзя указывать больше пяти хэш-тегов');
+    }
   }
+};
+
+
+hashtagInput.addEventListener('input', function () {
+  validateHashtags(hashtagInput.value);
 });
