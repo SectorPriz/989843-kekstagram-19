@@ -134,4 +134,19 @@ editFormCancel.addEventListener('click', function () {
   closeForm();
 });
 
+var imgUploadForm = document.querySelector('.img-upload__form');
+imgUploadForm.setAttribute('action', 'https://js.dump.academy/kekstagram');
 
+// Объявить пустой массив для хештегов
+// Объявить переменную поля ввода хештегов и найти ее в ДОМе
+// из этой строки в объект методом split засунуть данные
+
+/* var hash = document.querySelector('.text__hashtags');
+var hashtag = hash.split(', ');
+hash.addEventListener('invalid', function (evt) {
+  if (hash.validity.tooShort) {
+    hash.setCustomValidity('Хештеги должны начинаться с "#" и еще что-то там');
+  } else if (hash.validity.tooLong) {
+    hash.setCustomValidity('Каждый хештег не может привышать 20 символов, включая #');
+  }
+}); */
