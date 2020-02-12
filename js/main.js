@@ -141,12 +141,15 @@ imgUploadForm.setAttribute('action', 'https://js.dump.academy/kekstagram');
 // Объявить переменную поля ввода хештегов и найти ее в ДОМе
 // из этой строки в объект методом split засунуть данные
 
-/* var hash = document.querySelector('.text__hashtags');
-var hashtag = hash.split(', ');
-hash.addEventListener('invalid', function (evt) {
+var hash = document.querySelector('.text__hashtags');
+hash.setAttribute('minlength', '2');
+// var hashtag = hash.split(', ');
+hash.addEventListener('invalid', function () {
   if (hash.validity.tooShort) {
     hash.setCustomValidity('Хештеги должны начинаться с "#" и еще что-то там');
   } else if (hash.validity.tooLong) {
     hash.setCustomValidity('Каждый хештег не может привышать 20 символов, включая #');
+  } else {
+    hash.setCustomValidity('');
   }
-}); */
+});
