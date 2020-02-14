@@ -140,18 +140,33 @@ editFormCancel.addEventListener('click', function () {
 
 var hashtagInput = document.querySelector('.text__hashtags');
 
+// Я НЕ ПОНЯЛ КАК ИСПОЛЬЗОВАТЬ errorMesage.. Нужно для каждого сообщения завести свою переменную?
+
 var validateHashtags = function (value) {
+  var MIN_NUMBER_SYMBOLS = 2;
+  var MAX_NUMBER_SYMBOLS = 20;
+  var MAX_NUMBER_HASTAGS = 5;
+  var FIRST_SYMBOL_HASTAG = '#';
   value = value.toLowerCase();
   var hashtags = value.split(/\s+/g);
   for (i = 0; i < hashtags.length; i++) {
-    if (hashtags[i].length > 20) {
-      hashtagInput.setCustomValidity('Длина одного хэш-тега должа составлять 2 - 20 символов, включая решётку');
-    } else if (hashtags[i].length < 2) {
-      hashtagInput.setCustomValidity('Длина одного хэш-тега YF{EQ} составлять 2 - 20 символов, включая решётку');
-    } else if (hashtags[i].charAt(0) !== '#') {
+    if (hashtags[i].charAt(0) !== FIRST_SYMBOL_HASTAG) {
       hashtagInput.setCustomValidity('Каждый хэш-тег должен начинаться с символа # (решётка)');
-    } else if (hashtags.length > 5) {
+    } else if (hashtags[i].length < MIN_NUMBER_SYMBOLS) {
+      // Ругается именно на минимальное значение
+      hashtagInput.setCustomValidity('Длина одного хэш-тега должна составлять не менее 2х символов, включая решётку');
+    } else if (hashtags[i].length > MAX_NUMBER_SYMBOLS) {
+      hashtagInput.setCustomValidity('Длина одного хэш-тега должна составлять не больше 20 символов, включая решётку');
+    } else if (hashtags.length > MAX_NUMBER_HASTAGS) {
       hashtagInput.setCustomValidity('Hельзя указывать больше пяти хэш-тегов');
+    } else if (hashtags[i].test('jgh') !== hashtags[i]) {
+      hashtagInput.setCustomValidity('{eq}');
+    } else if (/[^а-я\w]/g.test(hashtags[i])) {
+      // не разобрался как исключить из проверки первый символ в строке
+      hashtagInput.setCustomValidity('Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т.п.), символы пунктуации (тире, дефис, запятая и т.п.), эмодзи и т.д.;');
+    } else if (hashtags[i] === hashtags[i]) {
+      // Корректно ли так сравнивать? И будет ли работать
+      hashtagInput.setCustomValidity('Один и тот же хэш-тег не может быть использован дважды;');
     }
   }
 };
