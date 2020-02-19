@@ -92,6 +92,8 @@ similarPictureElement.appendChild(fragment);
 
 // Поле выбора файла
 var uploadInput = document.querySelector('#upload-file');
+// Форма фильтров
+var imgFilterForm = document.querySelector('.img-filters__form');
 // Форма редактирования изображения
 var editForm = document.querySelector('.img-upload__overlay');
 // Кнопка закрытия формы редактирования изображения
@@ -99,6 +101,7 @@ var editFormCancel = document.querySelector('#upload-cancel');
 //
 var imgUploadForm = document.querySelector('.img-upload__form');
 imgUploadForm.setAttribute('action', 'https://js.dump.academy/kekstagram');
+
 // Обработчик нажатия клавиши Escape на клавиатуре
 
 var onEditFormEscPress = function (evt) {
@@ -122,6 +125,7 @@ var closeForm = function () {
   editForm.classList.add('hidden');
   document.removeEventListener('keydown', onEditFormEscPress);
   imgUploadForm.reset();
+  resetFilterForm();
 };
 
 // Открываем форму по событю change на поле добавления фотографии
@@ -134,44 +138,125 @@ uploadInput.addEventListener('change', function () {
 
 editFormCancel.addEventListener('click', function () {
   closeForm();
+  resetFilterForm();
 });
 
 // РАБОТА С ХЕШТЕГАМИ
 
 var hashtagInput = document.querySelector('.text__hashtags');
 
-// Я НЕ ПОНЯЛ КАК ИСПОЛЬЗОВАТЬ errorMesage.. Нужно для каждого сообщения завести свою переменную?
-
 var validateHashtags = function (value) {
-  var MIN_NUMBER_SYMBOLS = 2;
-  var MAX_NUMBER_SYMBOLS = 20;
-  var MAX_NUMBER_HASTAGS = 5;
-  var FIRST_SYMBOL_HASTAG = '#';
+  var MIN_LENGTH_HASHTAGS = 2;
+  var MAX_LENGTH_HASHTAGS = 20;
+  var MAX_HASHTAGS = 5;
+  var errorMessage = '';
+
   value = value.toLowerCase();
   var hashtags = value.split(/\s+/g);
+
+  if (hashtags.length > MAX_HASHTAGS) {
+    errorMessage += 'нельзя указать больше пяти хэш-тегов.\n';
+  }
+
   for (i = 0; i < hashtags.length; i++) {
-    if (hashtags[i].charAt(0) !== FIRST_SYMBOL_HASTAG) {
-      hashtagInput.setCustomValidity('Каждый хэш-тег должен начинаться с символа # (решётка)');
-    } else if (hashtags[i].length < MIN_NUMBER_SYMBOLS) {
-      // Ругается именно на минимальное значение
-      hashtagInput.setCustomValidity('Длина одного хэш-тега должна составлять не менее 2х символов, включая решётку');
-    } else if (hashtags[i].length > MAX_NUMBER_SYMBOLS) {
-      hashtagInput.setCustomValidity('Длина одного хэш-тега должна составлять не больше 20 символов, включая решётку');
-    } else if (hashtags.length > MAX_NUMBER_HASTAGS) {
-      hashtagInput.setCustomValidity('Hельзя указывать больше пяти хэш-тегов');
-    } else if (hashtags[i].test('jgh') !== hashtags[i]) {
-      hashtagInput.setCustomValidity('{eq}');
-    } else if (/[^а-я\w]/g.test(hashtags[i])) {
-      // не разобрался как исключить из проверки первый символ в строке
-      hashtagInput.setCustomValidity('Строка после решётки должна состоять из букв и чисел и не может содержать пробелы, спецсимволы (#, @, $ и т.п.), символы пунктуации (тире, дефис, запятая и т.п.), эмодзи и т.д.;');
-    } else if (hashtags[i] === hashtags[i]) {
-      // Корректно ли так сравнивать? И будет ли работать
-      hashtagInput.setCustomValidity('Один и тот же хэш-тег не может быть использован дважды;');
+    if (hashtags[i].length > MAX_LENGTH_HASHTAGS) {
+      errorMessage += 'Максимальная длина одного хэш-тега 20 символов, включая решётку.\n';
+      break;
     }
+    if (hashtags[i][0] !== '#') {
+      errorMessage += 'Хэш-тег должен начинаться с символа "#".\n';
+      break;
+    }
+    if (hashtags[i].length < MIN_LENGTH_HASHTAGS + 1) {
+      errorMessage += 'После символа "#" минимум ' + MIN_LENGTH_HASHTAGS + ' знака.\n';
+      break;
+    }
+    if (hashtags[0].indexOf('#', 1) >= 0) {
+      errorMessage += 'Хэш-теги разделяются пробелами.\n';
+      break;
+    }
+  }
+  for (i = 0; i < hashtags.length - 1; i++) {
+    if (~hashtags.indexOf(hashtags[i], i + 1)) {
+      errorMessage += 'Один и тот же хэш-тег не может быть использован дважды.\n';
+      break;
+    }
+  }
+  if (errorMessage) {
+    hashtagInput.setCustomValidity(errorMessage);
+  } else {
+    hashtagInput.setCustomValidity('');
+    hashtagInput.style.border = '';
   }
 };
 
-
 hashtagInput.addEventListener('input', function () {
   validateHashtags(hashtagInput.value);
+});
+
+hashtagInput.addEventListener('focus', function () {
+  document.removeEventListener('keydown', onEditFormEscPress);
+});
+
+hashtagInput.addEventListener('blur', function () {
+  document.addEventListener('keydown', onEditFormEscPress);
+});
+
+// ФИЛЬТРЫ
+
+var imgPreview = document.querySelector('.img-upload__preview');
+var effectLvlPin = document.querySelector('.effect-level__pin');
+var effectLvlDepth = document.querySelector('.effect-level__depth');
+// var effectLvlLine = document.querySelector('.effect-level__line');
+var effectNone = document.querySelector('.effects__preview--none');
+var effectChrome = document.querySelector('.effects__preview--chrome');
+var effectSepia = document.querySelector('.effects__preview--sepia');
+var effectMarvin = document.querySelector('.effects__preview--marvin');
+var effectPhobos = document.querySelector('.effects__preview--phobos');
+var effectHeat = document.querySelector('.effects__preview--heat');
+
+// При переключении эффектов, уровень насыщенности сбрасывается до
+// начального значения (100%)
+
+var resetFilterForm = function () {
+  imgPreview.removeAttribute('style');
+  effectLvlPin.removeAttribute('style');
+  effectLvlDepth.removeAttribute('style');
+};
+
+var defaultValueToogle = function () {
+  effectLvlPin.setAttribute('style', 'left:' + DEFAULT_VALUE_PERCENT + '%');
+  effectLvlDepth.setAttribute('style', 'width:' + DEFAULT_VALUE_PERCENT + '%');
+};
+
+var DEFAULT_VALUE_PERCENT = 100;
+var DEFAULT_VALUE_NUMBER = 3;
+
+effectNone.addEventListener('click', function () {
+  resetFilterForm();
+});
+
+effectChrome.addEventListener('click', function () {
+  imgPreview.setAttribute('style', 'filter: grayscale(' + DEFAULT_VALUE_PERCENT + '%)');
+  defaultValueToogle();
+});
+
+effectSepia.addEventListener('click', function () {
+  imgPreview.setAttribute('style', 'filter: sepia(' + DEFAULT_VALUE_PERCENT + '%)');
+  defaultValueToogle();
+});
+
+effectMarvin.addEventListener('click', function () {
+  imgPreview.setAttribute('style', 'filter: invert(' + DEFAULT_VALUE_PERCENT + '%)');
+  defaultValueToogle();
+});
+
+effectPhobos.addEventListener('click', function () {
+  imgPreview.setAttribute('style', 'filter: blur(' + DEFAULT_VALUE_NUMBER + 'px)');
+  defaultValueToogle();
+});
+
+effectHeat.addEventListener('click', function () {
+  imgPreview.setAttribute('style', 'filter: brightness(' + DEFAULT_VALUE_NUMBER + ')');
+  defaultValueToogle();
 });
