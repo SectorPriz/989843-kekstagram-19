@@ -92,8 +92,6 @@ similarPictureElement.appendChild(fragment);
 
 // Поле выбора файла
 var uploadInput = document.querySelector('#upload-file');
-// Форма фильтров
-var imgFilterForm = document.querySelector('.img-filters__form');
 // Форма редактирования изображения
 var editForm = document.querySelector('.img-upload__overlay');
 // Кнопка закрытия формы редактирования изображения
