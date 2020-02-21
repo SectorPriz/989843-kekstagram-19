@@ -2,9 +2,13 @@
 
 (function () {
 
+  var DEFAULT_VALUE_PERCENT = 100;
+  var DEFAULT_VALUE_NUMBER = 3;
+
   var imgPreview = document.querySelector('.img-upload__preview');
   var effectLvlPin = document.querySelector('.effect-level__pin');
   var effectLvlDepth = document.querySelector('.effect-level__depth');
+  // var effectPreview = document.querySelector('.effects__preview');
   var effectNone = document.querySelector('.effects__preview--none');
   var effectChrome = document.querySelector('.effects__preview--chrome');
   var effectSepia = document.querySelector('.effects__preview--sepia');
@@ -25,9 +29,6 @@
     effectLvlPin.setAttribute('style', 'left:' + DEFAULT_VALUE_PERCENT + '%');
     effectLvlDepth.setAttribute('style', 'width:' + DEFAULT_VALUE_PERCENT + '%');
   };
-
-  var DEFAULT_VALUE_PERCENT = 100;
-  var DEFAULT_VALUE_NUMBER = 3;
 
   effectNone.addEventListener('click', function () {
     resetFilterForm();
